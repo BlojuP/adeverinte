@@ -14,6 +14,12 @@ def adauga_win():
     window.title("Adauga client nou")
     window.geometry("600x500")
 
+    def combineFunc(self, *funcs):
+       def combinedFunc(*args, **kwargs):
+            for f in funcs:
+                f(*args, **kwargs)
+       return combinedFunc
+    
     class MyWindow:
         def __init__(self, window):
             self.lbl1=Label(window, text='Nume')
@@ -62,6 +68,11 @@ def adauga_win():
                 outF.write(line)
                 
             outF.close()
+            
+            window.destroy()
+
+
+
 #Today's Date Calendar
     today = date.today()
     cal = Calendar(window, selectmode="day", year=today.year, month=today.month, day=today.day)
@@ -74,7 +85,7 @@ def adauga_win():
         dt = cal.get_date()
         date1 = datetime.strptime(dt, "%m/%d/%y")
         date_expira = date1 + relativedelta(months=+6)
-        expira = date_expira.strftime("%m/%d/%y")
+        expira = date_expira.strftime("%B/%y")
         my_sixlabel.config(text=expira)
         
     
@@ -90,13 +101,7 @@ def adauga_win():
     mywin=MyWindow(window)
 
 
-root=Tk()
-root.title('Adeverinte')
-root.geometry("600x500+10+10")
 
-
-my_menu = Menu(root)
-root.config(menu=my_menu)
 
 
 # connecting to the database
@@ -109,52 +114,66 @@ cur.execute("""create table if not exists adeverinte(ROWID INTEGER PRIMARY KEY, 
 
 #Expired entries
 def file_expirate():
-    window1=Tk()
-    window1.title("Adeverinte Expirate")
-    window1.geometry("600x500")
+    root=Tk()
+    root.geometry("600x500+10+10")
 
-    class MyWindow1:
-        def __init__(self, window):
-            self.btn1 = Button(window, text='Iesire')
-            self.b1=Button(window, text='Iesire', command=window.destroy)
-        
-        try:
-            sqliteConnection = sqlite3.connect('adeverinte.db')
-            cursor = sqliteConnection.cursor()
-            print("Connected to SQLite")
+#Connect to DB
+    try:
+        sqliteConnection = sqlite3.connect('adeverinte.db')
+        cursor = sqliteConnection.cursor()
+        print("Connected to SQLite")
 
-            sqlite_select_query = """Select * from adeverinte"""
-            cursor.execute(sqlite_select_query)
-            records = cursor.fetchall()
-            numbers = len(records)
-            print("Total rows are: ", len(records))
-            print("Printing each row")
-            for row in records:
-                print(row[1], row[2], row[3], row[4], row[5], row[6])
-                print("\n")
+#print all content
+        #sqlite_select_query = """Select * from adeverinte"""
+        #cursor.execute(sqlite_select_query)
+        #records = cursor.fetchall()
+        #numbers = len(records)
+        #print("Total rows are: ", len(records))
+        #print("Printing each row")
+        #for row in records:
+           #print(row[1], row[2], row[3], row[4], row[5], row[6])
+           #print("\n")
 
-            cursor.close()
+#print content from specific date
+        ed = date.today()
+        data_expirare = ed.strftime('%B')
+        print("Luna curenta este", data_expirare)
+        cursor.execute("""Select * FROM adeverinte WHERE strftime('%m',expira)=?; """, data_expirare)
+        records = cursor.fetchall()
+        numbers = len(records)
+        print("Total rows are: ", len(records))
+        print("Printing each row")
+        for row in records:
+           print(row[1], row[2], row[3], row[4], row[5], row[6])
+           print("\n")
+
+        cursor.close()
 
 
-        except sqlite3.Error as error:
-            print("Failed to read data from sqlite table", error)
-
-        finally:
+    except sqlite3.Error as error:
+        print("Failed to read data from sqlite table", error)
+    
+    finally:
             if sqliteConnection:
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
-        
-    my_label = Label(window1, text="")
     
-    mywin1=MyWindow1(window1)
-
 def about_command():
     pass
 
 #Hide all frames
-def hide_all_frames():
+#def hide_all_frames():
     #file_new_frame.pack_forget()
-    file_expirate_frame.pack_forget()
+    #file_expirate_frame.pack_forget()
+
+    
+root=Tk()
+root.title('Adeverinte')
+root.geometry("600x500+10+10")
+
+
+my_menu = Menu(root)
+root.config(menu=my_menu)
 
 #Create a menu item
 
@@ -172,7 +191,7 @@ about_menu.add_command(label="Autor", command=about_command)
 #create frames
 #file_new_frame = Frame(window, width=600, height=500)
 #calendar_frame = Frame(file_new_frame, width = 300, height=300)
-file_expirate_frame = Frame(root, width=600, height=500)
+#file_expirate_frame = Frame(root, width=600, height=500)
 
 root.mainloop()
     
