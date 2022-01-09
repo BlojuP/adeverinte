@@ -34,7 +34,7 @@ def adauga_win():
             self.t4.place(x=120, y=220)
             self.lbl5.place(x=50, y=270)
             self.t5.place(x=120, y=270)
-            self.b1=Button(window, text='Adauga', command=lambda:[self.add, window.destroy] )
+            self.b1=Button(window, text='Adauga', command=self.add)
             self.b2=Button(window, text='Iesire', command=window.destroy)
             self.b1.place(x=50, y=350)
             self.b2.place(x=126, y=350)
@@ -89,17 +89,53 @@ cur = con.cursor()
 cur.execute("""create table if not exists adeverinte(ROWID INTEGER PRIMARY KEY, nume VARCHAR(200) not null, prenume VARCHAR(200) not null, email VARCHAR(200), telefon INT, data DATE);""")
 
 
-     
+#Expired entries
 def file_expirate():
-    hide_all_frames()
-    file_expirate_frame.pack(fill="both", expand=1)
+    window1=Tk()
+    window1.title("Adeverinte Expirate")
+    window1.geometry("600x500")
+
+    class MyWindow1:
+        def __init__(self, window):
+            self.btn1 = Button(window, text='Iesire')
+            self.b1=Button(window, text='Iesire', command=window.destroy)
+        
+        try:
+            sqliteConnection = sqlite3.connect('adeverinte.db')
+            cursor = sqliteConnection.cursor()
+            print("Connected to SQLite")
+
+            sqlite_select_query = """Select * from adeverinte"""
+            cursor.execute(sqlite_select_query)
+            records = cursor.fetchall()
+            numbers = len(records)
+            print("Total rows are: ", len(records))
+            print("Printing each row")
+            for row in records:
+                print(row[1], row[2], row[3], row[4], row[5])
+                print("\n")
+
+            cursor.close()
+
+
+        except sqlite3.Error as error:
+            print("Failed to read data from sqlite table", error)
+
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
+        
+    my_label = Label(window1, text="")
+    
+    mywin1=MyWindow1(window1)
 
 def about_command():
     pass
 
 #Hide all frames
 def hide_all_frames():
-    file_new_frame.pack_forget()
+    #file_new_frame.pack_forget()
     file_expirate_frame.pack_forget()
 
 #Create a menu item
@@ -121,3 +157,4 @@ about_menu.add_command(label="Autor", command=about_command)
 file_expirate_frame = Frame(root, width=600, height=500)
 
 root.mainloop()
+    
