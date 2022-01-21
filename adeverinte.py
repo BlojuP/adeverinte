@@ -5,6 +5,7 @@ from dateutil.relativedelta import *
 from dateutil.parser import parse
 import tkinter.messagebox
 import sqlite3
+import sys
 
 expira = date.today()
 
@@ -114,49 +115,55 @@ cur.execute("""create table if not exists adeverinte(ROWID INTEGER PRIMARY KEY, 
 
 #Expired entries
 def file_expirate():
-    root=Tk()
-    root.geometry("600x500+10+10")
+    window=Tk()
+    window.geometry("600x500+10+10")
 
 #Connect to DB
     try:
         sqliteConnection = sqlite3.connect('adeverinte.db')
         cursor = sqliteConnection.cursor()
-        print("Connected to SQLite")
+        #print("Connected to SQLite")
 
-#print all content
-        #sqlite_select_query = """Select * from adeverinte"""
-        #cursor.execute(sqlite_select_query)
-        #records = cursor.fetchall()
-        #numbers = len(records)
-        #print("Total rows are: ", len(records))
-        #print("Printing each row")
-        #for row in records:
-           #print(row[1], row[2], row[3], row[4], row[5], row[6])
-           #print("\n")
 
 #print content from specific date
         ed = date.today()
-        data_expirare = ed.strftime('%B')
-        print("Luna curenta este", data_expirare)
-        cursor.execute("""Select * FROM adeverinte WHERE strftime('%m',expira)=?; """, data_expirare)
+        data_expirare = ed.strftime('%B/%y')
+        #print("Luna curenta este", data_expirare)
+        data_expira = [data_expirare]
+        cursor.execute("""Select nume, prenume, email, telefon, expira from adeverinte where expira = ? ; """, data_expira)
         records = cursor.fetchall()
         numbers = len(records)
-        print("Total rows are: ", len(records))
-        print("Printing each row")
+        #print("Total rows are: ", len(records))
+        #print("Printing each row")
+        #for row in records:
+            #print(row[1], row[2], row[3], row[4], row[5], row[6])
+            #print("\n")
+
+            
+#Export to Text file
+        orig_stdout = sys.stdout
+        header = " Nume | Prenume | Email | Telefon | Data Expirare"
+        f = open('expirate.txt', 'w')
+        f.write(header +"\n")
+        sys.stdout = f
+
         for row in records:
-           print(row[1], row[2], row[3], row[4], row[5], row[6])
-           print("\n")
-
-        cursor.close()
-
-
+            f.write(str(row))
+            f.write("\n")
+            
+        sys.stdout = orig_stdout
+        f.close()    
+    
     except sqlite3.Error as error:
         print("Failed to read data from sqlite table", error)
     
     finally:
             if sqliteConnection:
                 sqliteConnection.close()
-                print("The SQLite connection is closed")
+                #print("The SQLite connection is closed")
+
+
+    window.destroy()
     
 def about_command():
     pass
