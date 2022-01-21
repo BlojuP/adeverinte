@@ -168,10 +168,6 @@ def file_expirate():
 def about_command():
     pass
 
-#Hide all frames
-#def hide_all_frames():
-    #file_new_frame.pack_forget()
-    #file_expirate_frame.pack_forget()
 
     
 root=Tk()
@@ -194,11 +190,6 @@ file_menu.add_command(label="Iesire", command=root.destroy)
 about_menu = Menu(my_menu)
 my_menu.add_cascade(label="Despre", menu=about_menu)
 about_menu.add_command(label="Autor", command=about_command)
-
-#create frames
-#file_new_frame = Frame(window, width=600, height=500)
-#calendar_frame = Frame(file_new_frame, width = 300, height=300)
-#file_expirate_frame = Frame(root, width=600, height=500)
 
 root.mainloop()
     
