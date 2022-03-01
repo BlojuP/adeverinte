@@ -1,6 +1,6 @@
 # adeverinte
 program adeverinte
 
-Libraries required and how to install them: /n
-Tkinter: run command _pip install tkinter_ /n
-Tkcalendar: run command _pip install tkcalendar_
+Libraries required and how to install them: <br />
+Tkinter: run command _pip install tkinter_ <br />
+Tkcalendar: run command _pip install tkcalendar_ <br />
