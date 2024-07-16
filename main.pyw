@@ -44,7 +44,7 @@ if same:
 else:
     newImageSizeHeight = int(imageSizeHeight/n) 
     
-background_image = background_image.resize((newImageSizeWidth,newImageSizeHeight),Image.ANTIALIAS)
+background_image = background_image.resize((newImageSizeWidth,newImageSizeHeight),Image.Resampling.LANCZOS)
 img = ImageTk.PhotoImage(background_image)
 Canvas1 = Canvas(root)
 Canvas1.create_image(300,250,image = img)      
